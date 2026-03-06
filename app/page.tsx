@@ -17,6 +17,14 @@ const jacquard24 = Jacquard_12({
   subsets: ["latin"],
 });
 
+// ─── MOBILE TUNING CONSTANTS (adjust while testing) ───────────────────────
+/** Height in px of dead zones at top/bottom of viewport where touch always drives animation */
+const MOBILE_DEAD_ZONE_HEIGHT = 150;
+// Variable made for testing
+const MOBILE_DEAD_ZONE_OPACITY = 0;
+/** Accumulated scroll (px) after which ALL touch input drives animation, sphere rotation disabled */
+const MOBILE_SPHERE_LOCK_TOLERANCE = 100;
+
 export default function page() {
   const heroContainerRef = useRef<HTMLDivElement>(null);
   const scrollProgressRef = useRef(0);
@@ -37,6 +45,7 @@ export default function page() {
   // handler resets this to false so Sections reactivates.
   const isScrollingBackRef = useRef(false);
   const sectionsActiveRef = useRef(false);
+  const sphereInteractionDisabledRef = useRef(false);
 
   // Track viewport size for pixel grid — only runs on client, preventing SSR mismatch
   useEffect(() => {
@@ -207,6 +216,12 @@ export default function page() {
         Math.min(totalThreshold, accumulatedScrollRef.current),
       );
 
+      // Update sphere interaction lock for mobile
+      if (window.innerWidth < 768) {
+        sphereInteractionDisabledRef.current =
+          accumulatedScrollRef.current >= MOBILE_SPHERE_LOCK_TOLERANCE;
+      }
+
       // Calculate sphere progress (0-1, from 0-sphereThreshold)
       const sphereProgress = Math.min(
         1,
@@ -233,20 +248,43 @@ export default function page() {
     // Touch handling for mobile
     let touchStartY = 0;
     let touchStartedOnSphere = false;
+    let touchStartedOnWindow = false;
 
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY = e.touches[0].clientY;
-      // Check if the touch started on the sphere canvas (sphere is visible when not in sections)
       const target = e.target as HTMLElement;
+      const isMobileDevice = window.innerWidth < 768;
+
+      // Check if touch started on a photo window (don't drive animation)
+      touchStartedOnWindow = !!target.closest("[data-photo-window]");
+
       const sectionsThresholdForTouch = sphereThreshold - 200 + circleThreshold;
-      touchStartedOnSphere =
-        target.tagName === "CANVAS" &&
-        accumulatedScrollRef.current < sectionsThresholdForTouch;
+
+      if (isMobileDevice) {
+        const touchY = e.touches[0].clientY;
+        const vh = window.innerHeight;
+        const inDeadZone =
+          touchY < MOBILE_DEAD_ZONE_HEIGHT ||
+          touchY > vh - MOBILE_DEAD_ZONE_HEIGHT;
+        const sphereLocked =
+          accumulatedScrollRef.current >= MOBILE_SPHERE_LOCK_TOLERANCE;
+
+        // On mobile: sphere interaction disabled in dead zones or when locked
+        touchStartedOnSphere =
+          target.tagName === "CANVAS" &&
+          !inDeadZone &&
+          !sphereLocked &&
+          accumulatedScrollRef.current < sectionsThresholdForTouch;
+      } else {
+        touchStartedOnSphere =
+          target.tagName === "CANVAS" &&
+          accumulatedScrollRef.current < sectionsThresholdForTouch;
+      }
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      // If touch started on sphere canvas, let the sphere handle it (rotation)
-      if (touchStartedOnSphere) return;
+      // If touch started on sphere canvas or a photo window, don't drive animation
+      if (touchStartedOnSphere || touchStartedOnWindow) return;
 
       if (!heroContainerRef.current) return;
 
@@ -295,6 +333,12 @@ export default function page() {
         Math.min(totalThreshold, accumulatedScrollRef.current),
       );
 
+      // Update sphere interaction lock for mobile
+      if (window.innerWidth < 768) {
+        sphereInteractionDisabledRef.current =
+          accumulatedScrollRef.current >= MOBILE_SPHERE_LOCK_TOLERANCE;
+      }
+
       const sphereProgress = Math.min(
         1,
         accumulatedScrollRef.current / sphereThreshold,
@@ -341,6 +385,23 @@ export default function page() {
         ref={heroContainerRef}
         className="relative w-full h-dvh overflow-hidden"
       >
+        {/* Mobile-only dead zones: gray strips where touch always drives animation scroll */}
+        <div
+          className="absolute left-0 right-0 top-0 z-21 pointer-events-none md:hidden"
+          style={{
+            height: MOBILE_DEAD_ZONE_HEIGHT,
+            backgroundColor: `rgba(107, 114, 128, ${MOBILE_DEAD_ZONE_OPACITY})`,
+            opacity: circleProgress >= 1 ? 0 : 1,
+          }}
+        />
+        <div
+          className="absolute left-0 right-0 bottom-0 z-21 pointer-events-none md:hidden"
+          style={{
+            height: MOBILE_DEAD_ZONE_HEIGHT,
+            backgroundColor: `rgba(107, 114, 128, ${MOBILE_DEAD_ZONE_OPACITY})`,
+            opacity: circleProgress >= 1 ? 0 : 1,
+          }}
+        />
         {/* PhotoSphere layer — fades out as pixel grid expands */}
         <div
           className="absolute inset-0 flex items-center justify-center"
@@ -375,6 +436,7 @@ export default function page() {
               ditherFinalPixelSize={15}
               ditherPaletteSize={100}
               ditherStrength={0.5}
+              interactionDisabledRef={sphereInteractionDisabledRef}
             />
           </div>
         </div>

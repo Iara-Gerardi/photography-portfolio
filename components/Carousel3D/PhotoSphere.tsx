@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import * as THREE from "three";
 import { EffectComposer, EffectPass, RenderPass } from "postprocessing";
-import DecorativeContainer from "../DecorativeContainer";
+import DecorativeContainer from "../DecorativeContainer/DecorativeContainer";
 import { motion, AnimatePresence } from "framer-motion";
 import { DitherEffect } from "./DitherEffect";
 import { generateBlueNoiseTexture } from "@/lib/generateBlueNoise";
@@ -67,6 +67,8 @@ interface PhotoSphereProps {
   onScrollStart?: () => void;
   /** Callback when all images have finished loading */
   onLoadComplete?: () => void;
+  /** Ref that disables sphere touch/mouse interaction when true (mobile scroll lock) */
+  interactionDisabledRef?: MutableRefObject<boolean>;
   /** Initial pixel size for dithering at scroll=0 (1 = full res). Omit to disable dithering. */
   ditherInitialPixelSize?: number;
   /** Final pixel size for dithering at scroll=1 (higher = more pixelated) */
@@ -96,6 +98,7 @@ const PhotoSphere = ({
   scrollProgressRef,
   onScrollStart,
   onLoadComplete,
+  interactionDisabledRef,
   ditherInitialPixelSize,
   ditherFinalPixelSize = 20,
   ditherPaletteSize = 4,
@@ -129,7 +132,7 @@ const PhotoSphere = ({
   const loadedImagesCountRef = useRef(0);
 
   const [windows, setWindows] = useState<PhotoWindow[]>([]);
-  const [nextZIndex, setNextZIndex] = useState(1000);
+  const nextZIndexRef = useRef(1000);
   const diagonalOffsetRef = useRef({ x: 0, y: 0 });
 
   // Store close function in ref so animation loop can call it
@@ -413,7 +416,7 @@ const PhotoSphere = ({
     let touchMoved = false;
 
     const handleTouchStart = (e: TouchEvent) => {
-      if (!enableMouseControl) return;
+      if (!enableMouseControl || interactionDisabledRef?.current) return;
       isDraggingRef.current = true;
       const touch = e.touches[0];
       previousMouseRef.current = { x: touch.clientX, y: touch.clientY };
@@ -423,7 +426,7 @@ const PhotoSphere = ({
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (!enableMouseControl || !isDraggingRef.current) return;
+      if (!enableMouseControl || !isDraggingRef.current || interactionDisabledRef?.current) return;
 
       const deltaX = e.touches[0].clientX - previousMouseRef.current.x;
       const deltaY = e.touches[0].clientY - previousMouseRef.current.y;
@@ -662,6 +665,13 @@ const PhotoSphere = ({
       windowWidth = Math.round(windowWidth);
       windowHeight = Math.round(windowHeight);
 
+      // Scale down on mobile for better fit
+      const isMobileDevice = window.innerWidth < 768;
+      if (isMobileDevice) {
+        windowWidth = Math.round(windowWidth * 0.6);
+        windowHeight = Math.round(windowHeight * 0.6);
+      }
+
       let x: number;
       let y: number;
 
@@ -687,18 +697,19 @@ const PhotoSphere = ({
         y = Math.random() * Math.max(0, containerRect.height - windowHeight);
       }
 
+      const zIndex = nextZIndexRef.current++;
+
       const newWindow: PhotoWindow = {
         id: `window-${Date.now()}-${Math.random()}`,
         imageUrl,
         x,
         y,
-        zIndex: nextZIndex,
+        zIndex,
         width: windowWidth,
         height: windowHeight,
       };
 
       setWindows((prev) => [...prev, newWindow]);
-      setNextZIndex((prev) => prev + 1);
     };
   };
 
@@ -707,10 +718,10 @@ const PhotoSphere = ({
   };
 
   const bringToFront = (id: string) => {
+    const zIndex = nextZIndexRef.current++;
     setWindows((prev) =>
-      prev.map((w) => (w.id === id ? { ...w, zIndex: nextZIndex } : w)),
+      prev.map((w) => (w.id === id ? { ...w, zIndex } : w)),
     );
-    setNextZIndex((prev) => prev + 1);
   };
 
   const moveWindow = (id: string, newX: number, newY: number) => {
@@ -759,9 +770,42 @@ const PhotoSphere = ({
             window.addEventListener("mouseup", handleMouseUp);
           };
 
+          // Touch-based window dragging (mobile)
+          const handleTouchStartDrag = (e: React.TouchEvent) => {
+            const target = e.target as HTMLElement;
+            if (!target.closest(".draggable-header")) return;
+
+            bringToFront(photoWindow.id);
+            const touch = e.touches[0];
+            const startX = touch.clientX;
+            const startY = touch.clientY;
+            const startWindowX = photoWindow.x;
+            const startWindowY = photoWindow.y;
+
+            const handleTouchMoveDrag = (moveEvent: TouchEvent) => {
+              const moveTouch = moveEvent.touches[0];
+              const deltaX = moveTouch.clientX - startX;
+              const deltaY = moveTouch.clientY - startY;
+              moveWindow(
+                photoWindow.id,
+                startWindowX + deltaX,
+                startWindowY + deltaY,
+              );
+            };
+
+            const handleTouchEndDrag = () => {
+              window.removeEventListener("touchmove", handleTouchMoveDrag);
+              window.removeEventListener("touchend", handleTouchEndDrag);
+            };
+
+            window.addEventListener("touchmove", handleTouchMoveDrag);
+            window.addEventListener("touchend", handleTouchEndDrag);
+          };
+
           return (
             <motion.div
               key={photoWindow.id}
+              data-photo-window
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
@@ -773,6 +817,7 @@ const PhotoSphere = ({
                 zIndex: photoWindow.zIndex,
               }}
               onMouseDown={handleMouseDown}
+              onTouchStart={handleTouchStartDrag}
             >
               <DecorativeContainer
                 mode="modal"

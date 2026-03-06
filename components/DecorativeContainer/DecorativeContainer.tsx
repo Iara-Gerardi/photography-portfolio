@@ -73,8 +73,8 @@ export const DecorativeContainer: React.FC<DecorativeContainerProps> = ({
           }}
         >
           {/* Header */}
-          <div className="draggable-header flex items-center justify-between border-b-2 border-dashed border-slate-400/30 px-3 py-2 flex-shrink-0 cursor-move select-none">
-          <span className={`text-slate-400/70 text-4xl ${jacquard24.className}`}>{title}</span>
+          <div className="draggable-header flex items-center justify-between border-b-2 border-dashed border-slate-400/30 px-3 py-2 shrink-0 cursor-move select-none">
+          <span className={`text-slate-400/70 text-2xl md:text-4xl ${jacquard24.className}`}>{title}</span>
           {onClose && (
             <button
               onClick={onClose}
@@ -92,7 +92,7 @@ export const DecorativeContainer: React.FC<DecorativeContainerProps> = ({
 
         {/* Actions */}
         {showActions && (
-          <div className="flex w-full bottom-0 items-center justify-end gap-2 p-5 flex-shrink-0 absolute">
+          <div className="flex w-full bottom-0 items-center justify-end gap-2 p-5 shrink-0 absolute">
             {onCancel && (
               <button
                 disabled
