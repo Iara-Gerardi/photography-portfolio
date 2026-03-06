@@ -33,23 +33,23 @@ const lissajousConfig: React.ComponentProps<typeof Lissajous> = {
 };
 
 const SUBWAY_IMAGES: AnimatedPhotoProps[] = [
-  { src: img8, delay: 1.5 },
-  { src: img3, delay: 0.9 },
-  { src: img2, delay: 0.6 },
-  { src: img13, delay: 0.9 },
-  { src: img9, delay: 1.5 },
+  { src: img8, delay: 1.5 ,label:"( ??? )"},
+  { src: img3, delay: 0.9 ,label:"( ??? )"},
+  { src: img2, delay: 0.6 ,label:"( ??? )"},
+  { src: img13, delay: 0.9,label:"( ??? )" },
+  { src: img9, delay: 1.5,label:"( ??? )" },
 
-  { src: img7, delay: 1.2 },
-  { src: img5, delay: 0.6 },
-  { src: img1, delay: 0.3 },
-  { src: img14, delay: 0.6 },
-  { src: img6, delay: 1.2 },
+  { src: img7, delay: 1.2 ,label:"( ??? )"},
+  { src: img5, delay: 0.6 ,label:"( ??? )"},
+  { src: img1, delay: 0.3 ,label:"( ??? )"},
+  { src: img14, delay: 0.6 ,label:"( ??? )"},
+  { src: img6, delay: 1.2,label:"( ??? )" },
 
-  { src: img10, delay: 1.5 },
-  { src: img11, delay: 0.9 },
-  { src: img12, delay: 0.6 },
-  { src: img4, delay: 0.9 },
-  { src: img15, delay: 1.5 },
+  { src: img10, delay: 1.5 ,label:"( ??? )"},
+  { src: img11, delay: 0.9 ,label:"( ??? )"},
+  { src: img12, delay: 0.6,label:"( ??? )" },
+  { src: img4, delay: 0.9,label:"( ??? )" },
+  { src: img15, delay: 1.5 ,label:"( ??? )"},
 ];
 
 const COVER_INDICES = new Set([1, 3, 11, 13]);
@@ -58,7 +58,7 @@ function Subway() {
   return (
     <div className="bg-black min-h-dvh">
       <Lissajous {...lissajousConfig} classname="absolute overflow-hidden" />
-      <div className="border-transparent border-[20px] md:border-[50px] w-full h-dvh grid grid-cols-3 grid-rows-5 md:grid-cols-5 gap-4 md:gap-2 md:grid-rows-[1fr_2.5fr_1fr] overflow-hidden relative">
+      <div className="border-transparent border-20 md:border-50 w-full h-dvh grid grid-cols-3 grid-rows-5 md:grid-cols-5 gap-4 md:gap-2 md:grid-rows-[1fr_2.5fr_1fr] overflow-hidden relative">
         {SUBWAY_IMAGES.map((item, i) => (
           <SubwayAnimatedPhoto
             key={`subway-${i}`}

@@ -29,7 +29,7 @@ function AnimatedPhoto({ item }: { item: AnimatedPhotoProps }) {
       className={`relative flex items-end w-full h-full ${item.wrapperClassName}`}
     >
       {item.label && (
-        <p className="font-bold mt-1.5 w-full text-[10px] tracking-wide text-neutral-200">
+        <p className="font-bold mt-1.5 w-full text-[10px] tracking-wide text-neutral-200 relative z-10">
           {item.label}
         </p>
       )}
