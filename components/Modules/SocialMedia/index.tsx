@@ -14,9 +14,9 @@ function SocialMedia() {
     <motion.div
       key="bottom"
       className="relative w-full h-dvh flex flex-col items-center justify-center bg-black py-16"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0, scale: 1.5 }}
+      initial={{ opacity: 0, backgroundColor: "#000000" }}
+      animate={{ opacity: 1, backgroundColor: "#000000" }}
+      exit={{ opacity: 0, scale: 1.5, backgroundColor: "#000000" }}
       transition={{ duration: 0.6, ease: "easeInOut" }}
     >
       <div className="flex flex-col items-center justify-center gap-4">

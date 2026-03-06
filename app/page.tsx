@@ -46,6 +46,7 @@ export default function page() {
   const isScrollingBackRef = useRef(false);
   const sectionsActiveRef = useRef(false);
   const sphereInteractionDisabledRef = useRef(false);
+  const [sphereLocked, setSphereLocked] = useState(false);
 
   // Track viewport size for pixel grid — only runs on client, preventing SSR mismatch
   useEffect(() => {
@@ -218,8 +219,9 @@ export default function page() {
 
       // Update sphere interaction lock for mobile
       if (window.innerWidth < 768) {
-        sphereInteractionDisabledRef.current =
-          accumulatedScrollRef.current >= MOBILE_SPHERE_LOCK_TOLERANCE;
+        const locked = accumulatedScrollRef.current >= MOBILE_SPHERE_LOCK_TOLERANCE;
+        sphereInteractionDisabledRef.current = locked;
+        setSphereLocked(locked);
       }
 
       // Calculate sphere progress (0-1, from 0-sphereThreshold)
@@ -335,8 +337,9 @@ export default function page() {
 
       // Update sphere interaction lock for mobile
       if (window.innerWidth < 768) {
-        sphereInteractionDisabledRef.current =
-          accumulatedScrollRef.current >= MOBILE_SPHERE_LOCK_TOLERANCE;
+        const locked = accumulatedScrollRef.current >= MOBILE_SPHERE_LOCK_TOLERANCE;
+        sphereInteractionDisabledRef.current = locked;
+        setSphereLocked(locked);
       }
 
       const sphereProgress = Math.min(
@@ -407,7 +410,10 @@ export default function page() {
           className="absolute inset-0 flex items-center justify-center"
           style={{
             opacity: circleProgress > 0 ? 1 - circleProgress : 1,
-            pointerEvents: circleProgress >= 1 ? "none" : "auto",
+            pointerEvents:
+              circleProgress >= 1 || (sphereLocked && viewportSize && viewportSize.width < 768)
+                ? "none"
+                : "auto",
             zIndex: 20,
           }}
         >

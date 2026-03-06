@@ -140,17 +140,17 @@ function Sections({
         <motion.div
           key="sections"
           className="relative w-full h-dvh overflow-hidden"
-          animate={{ opacity: 1 }}
-          initial={{ opacity: 0 }}
-          exit={{ opacity: 0, scale: 1.5 }}
+          animate={{ opacity: 1, backgroundColor: SECTIONS[current].bg }}
+          initial={{ opacity: 0, backgroundColor: "#94a3b8" }}
+          exit={{ opacity: 0, scale: 1.5, backgroundColor: "#000000" }}
           transition={{ duration: 0.6, ease: "easeInOut" }}
         >
           <AnimatePresence mode="wait">
             <motion.div
               key={SECTIONS[current].key}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0,  backgroundColor: current === 0 ? "#94a3b8" : SECTIONS[current].bg }}
+              animate={{ opacity: 1,  backgroundColor: SECTIONS[current].bg }}
+              exit={{ opacity: 0, backgroundColor: current === 3 ? "#000000" : SECTIONS[current].bg }}
               transition={{ duration: 0.6, ease: "easeInOut" }}
               className="absolute inset-0"
             >
