@@ -15,8 +15,8 @@ function Dollhouse() {
         className="absolute inset-0"
       />
       <div
-        className="grid grid-cols-4 gap-3 p-4"
-        style={{ height: "100dvh", gridTemplateRows: "1fr 1fr 2.05fr" }}
+        className="grid grid-cols-4 gap-3 p-4 grid-rows-[1fr_1fr_1.35fr_1.8fr] md:grid-rows-[1fr_1fr_2.05fr]"
+        style={{ height: "100dvh" }}
       >
         {ITEMS.map((item, i) => (
           <AnimatedPhoto key={`grid-item-${i}`} item={item} />

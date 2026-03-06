@@ -33,23 +33,23 @@ const lissajousConfig: React.ComponentProps<typeof Lissajous> = {
 };
 
 const SUBWAY_IMAGES: AnimatedPhotoProps[] = [
-  { src: img8, delay: 1.5 ,label:"( ??? )"},
-  { src: img3, delay: 0.9 ,label:"( ??? )"},
-  { src: img2, delay: 0.6 ,label:"( ??? )"},
-  { src: img13, delay: 0.9,label:"( ??? )" },
-  { src: img9, delay: 1.5,label:"( ??? )" },
+  { src: img8, delay: 1.5, label: "{ ??? }" },
+  { src: img3, delay: 0.9, label: "{ ??? }" },
+  { src: img2, delay: 0.6, label: "{ ??? }" },
+  { src: img13, delay: 0.9, label: "{ ??? }" },
+  { src: img9, delay: 1.5, label: "{ ??? }" },
 
-  { src: img7, delay: 1.2 ,label:"( ??? )"},
-  { src: img5, delay: 0.6 ,label:"( ??? )"},
-  { src: img1, delay: 0.3 ,label:"( ??? )"},
-  { src: img14, delay: 0.6 ,label:"( ??? )"},
-  { src: img6, delay: 1.2,label:"( ??? )" },
+  { src: img7, delay: 1.2, label: "{ ??? }" },
+  { src: img5, delay: 0.6, label: "{ ??? }" },
+  { src: img1, delay: 0.3, label: "{ ??? }" },
+  { src: img14, delay: 0.6, label: "{ ??? }" },
+  { src: img6, delay: 1.2, label: "{ ??? }" },
 
-  { src: img10, delay: 1.5 ,label:"( ??? )"},
-  { src: img11, delay: 0.9 ,label:"( ??? )"},
-  { src: img12, delay: 0.6,label:"( ??? )" },
-  { src: img4, delay: 0.9,label:"( ??? )" },
-  { src: img15, delay: 1.5 ,label:"( ??? )"},
+  { src: img10, delay: 1.5, label: "{ ??? }" },
+  { src: img11, delay: 0.9, label: "{ ??? }" },
+  { src: img12, delay: 0.6, label: "{ ??? }" },
+  { src: img4, delay: 0.9, label: "{ ??? }" },
+  { src: img15, delay: 1.5, label: "{ ??? }" },
 ];
 
 const COVER_INDICES = new Set([1, 3, 11, 13]);

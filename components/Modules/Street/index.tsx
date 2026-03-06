@@ -19,7 +19,8 @@ const lissajousConfig: React.ComponentProps<typeof Lissajous> = {
 
 export default function Street() {
   return (
-    <div className="bg-black min-h-dvh">
+    <div className="bg-black min-h-dvh relative">
+      
       <Lissajous {...lissajousConfig} classname="absolute overflow-hidden" />
       <div className="grid grid-cols-3 gap-3 p-4" style={{ height: "100dvh" }}>
         {STREET_ITEMS.map((item, i) => (
