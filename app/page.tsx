@@ -298,6 +298,12 @@ export default function page() {
       const deltaY = touchStartY - e.touches[0].clientY;
       touchStartY = e.touches[0].clientY;
 
+      // On mobile, always prevent browser default scroll while hero scroll-jacking is active
+      // (except when at the very start scrolling up — allow natural scroll above hero)
+      if (!(accumulatedScrollRef.current <= 0 && deltaY < 0)) {
+        e.preventDefault();
+      }
+
       // Sections territory: accumulator >= sectionsThreshold means circleProgress = 1.
       const sectionsThreshold = sphereThreshold - 200 + circleThreshold;
 
@@ -327,8 +333,6 @@ export default function page() {
       if (accumulatedScrollRef.current >= totalThreshold && deltaY > 0) return;
       if (accumulatedScrollRef.current <= 0 && deltaY < 0) return;
 
-      e.preventDefault();
-
       accumulatedScrollRef.current += deltaY * 2;
       accumulatedScrollRef.current = Math.max(
         0,
@@ -349,11 +353,14 @@ export default function page() {
       scrollProgressRef.current = sphereProgress;
       setSphereProgress(sphereProgress);
 
+      // Add + 200 to overlap the circle animation slightly with the end of the sphere animation
+      // (must match the wheel handler to avoid a dead zone where neither handler processes input)
       const circleProgressValue = Math.min(
         1,
         Math.max(
           0,
-          (accumulatedScrollRef.current - sphereThreshold) / circleThreshold,
+          (accumulatedScrollRef.current - sphereThreshold + 200) /
+            circleThreshold,
         ),
       );
       setCircleProgress(circleProgressValue);
