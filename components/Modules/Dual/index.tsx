@@ -19,7 +19,7 @@ const lissajousConfig: React.ComponentProps<typeof Lissajous> = {
   character: '".✶."',
   renderMode: "dots",
   amplitudeX: 4,
-  amplitudeY: 1.7,
+  amplitudeY: 2,
   sampleCount: 3000,
   freqA: 9,
   freqB: 5,
