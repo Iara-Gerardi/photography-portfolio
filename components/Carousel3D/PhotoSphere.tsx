@@ -130,6 +130,9 @@ const PhotoSphere = ({
   externalScrollProgressRef.current = scrollProgressRef;
   // Track loaded images count
   const loadedImagesCountRef = useRef(0);
+  // Timestamp of the last window opened via touch, used to suppress the
+  // synthetic 'click' event the browser fires ~300ms after touchend
+  const lastTouchOpenRef = useRef(0);
 
   const [windows, setWindows] = useState<PhotoWindow[]>([]);
   const nextZIndexRef = useRef(1000);
@@ -378,6 +381,9 @@ const PhotoSphere = ({
     };
 
     const handleClick = (e: MouseEvent) => {
+      // Suppress synthetic click fired by the browser after a touch tap
+      if (Date.now() - lastTouchOpenRef.current < 600) return;
+
       // Don't open window if scroll animation is active
       if (scrollProgressRef && scrollProgressRef.current > 0) {
         return;
@@ -471,6 +477,7 @@ const PhotoSphere = ({
           const tappedMesh = intersects[0].object as THREE.Mesh;
           const imageUrl = meshToImageMapRef.current.get(tappedMesh);
           if (imageUrl) {
+            lastTouchOpenRef.current = Date.now();
             openWindow(imageUrl);
           }
         }
@@ -783,6 +790,7 @@ const PhotoSphere = ({
             const startWindowY = photoWindow.y;
 
             const handleTouchMoveDrag = (moveEvent: TouchEvent) => {
+              moveEvent.preventDefault();
               const moveTouch = moveEvent.touches[0];
               const deltaX = moveTouch.clientX - startX;
               const deltaY = moveTouch.clientY - startY;
@@ -798,7 +806,7 @@ const PhotoSphere = ({
               window.removeEventListener("touchend", handleTouchEndDrag);
             };
 
-            window.addEventListener("touchmove", handleTouchMoveDrag);
+            window.addEventListener("touchmove", handleTouchMoveDrag, { passive: false });
             window.addEventListener("touchend", handleTouchEndDrag);
           };
 
