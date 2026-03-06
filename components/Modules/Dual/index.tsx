@@ -63,7 +63,7 @@ const DUAL_IMAGES: AnimatedPhotoProps[] = [
 
 function Dual() {
   return (
-    <div className="bg-slate-400 h-screen relative overflow-hidden">
+    <div className="bg-slate-400 h-dvh relative overflow-hidden">
       <motion.div
         initial={{ scale: 0.3, opacity: 0, position: "absolute", inset: 0, zIndex: 10 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -76,7 +76,7 @@ function Dual() {
           squareSize="size-[2.3px] md:size-1"
         />
       </motion.div>
-      <div className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-6 max-sm:py-4 pt-4 justify-between h-screen grid-rows-3 md:grid-rows-[1fr_2.3fr] !justify-items-center">
+      <div className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-6 max-sm:py-4 pt-4 justify-between h-dvh grid-rows-3 md:grid-rows-[1fr_2.3fr] justify-items-center!">
         {DUAL_IMAGES.map((item, i) => (
           <AnimatedPhoto key={`dual-image-${i}`} item={item} />
         ))}

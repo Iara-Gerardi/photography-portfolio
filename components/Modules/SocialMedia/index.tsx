@@ -13,7 +13,7 @@ function SocialMedia() {
   return (
     <motion.div
       key="bottom"
-      className="relative w-full h-screen flex flex-col items-center justify-center bg-black py-16"
+      className="relative w-full h-dvh flex flex-col items-center justify-center bg-black py-16"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, scale: 1.5 }}
@@ -26,14 +26,20 @@ function SocialMedia() {
           cameraDistance={2}
           rotationSpeed={0.0018}
         />
-        <DecryptionText
-          text="instagram"
-          initialText="?????????"
-          startEncrypted={true}
-          speed={20}
-          revealSpeed={0.3}
-          className={`bold tracking-wider cursor-pointer text-2xl ${jacquard24.className}`}
-        />
+        <a
+          href="https://www.instagram.com/ocrequemado"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <DecryptionText
+            text="instagram"
+            initialText="?????????"
+            startEncrypted={true}
+            speed={20}
+            revealSpeed={0.3}
+            className={`bold tracking-wider cursor-pointer text-2xl ${jacquard24.className}`}
+          />
+        </a>
       </div>
       <p
         className={`text-white h-16 w-full flex items-center justify-center bold text-3xl md:text-5xl ${jacquard24.className} relative top-24`}

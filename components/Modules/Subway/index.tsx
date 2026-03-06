@@ -56,9 +56,9 @@ const COVER_INDICES = new Set([1, 3, 11, 13]);
 
 function Subway() {
   return (
-    <div className="bg-black min-h-screen">
+    <div className="bg-black min-h-dvh">
       <Lissajous {...lissajousConfig} classname="absolute overflow-hidden" />
-      <div className="border-transparent border-[20px] md:border-[50px] w-full h-screen grid grid-cols-3 grid-rows-5 md:grid-cols-5 gap-4 md:gap-2 md:grid-rows-[1fr_2.5fr_1fr] overflow-hidden relative">
+      <div className="border-transparent border-[20px] md:border-[50px] w-full h-dvh grid grid-cols-3 grid-rows-5 md:grid-cols-5 gap-4 md:gap-2 md:grid-rows-[1fr_2.5fr_1fr] overflow-hidden relative">
         {SUBWAY_IMAGES.map((item, i) => (
           <SubwayAnimatedPhoto
             key={`subway-${i}`}

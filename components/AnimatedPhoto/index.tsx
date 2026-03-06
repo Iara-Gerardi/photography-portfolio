@@ -3,6 +3,15 @@ import { motion } from "framer-motion";
 import { AnimatedPhotoProps } from "./types";
 import { cn } from "@/lib/utils";
 
+// Explicit mapping so Tailwind v4 can detect the full class names at build time
+const objectFitClass: Record<string, string> = {
+  contain: "object-contain",
+  cover: "object-cover",
+  fill: "object-fill",
+  none: "object-none",
+  "scale-down": "object-scale-down",
+};
+
 function AnimatedPhoto({ item }: { item: AnimatedPhotoProps }) {
   const wrapperStyle = {
     gridColumnStart: item.column || undefined,
@@ -34,7 +43,11 @@ function AnimatedPhoto({ item }: { item: AnimatedPhotoProps }) {
           fill
           className={cn(
             item.className,
-            `${item.objectFit ? `object-${item.objectFit}` : `${!!item.mobileObjectFit ? `object-${item.mobileObjectFit}` : "object-contain"} sm:object-contain`}`,
+            item.objectFit
+              ? objectFitClass[item.objectFit]
+              : item.mobileObjectFit
+                ? `${objectFitClass[item.mobileObjectFit]} sm:object-contain`
+                : "object-contain",
           )}
         />
       </div>

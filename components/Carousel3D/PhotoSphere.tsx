@@ -55,6 +55,8 @@ interface PhotoSphereProps {
   height?: number;
   /** Canvas width */
   width?: number;
+  /** Canvas width on mobile devices */
+  mobileWidth?: number;
   /** Window positioning style: 'random' or 'diagonal' */
   windowPositioning?: "random" | "diagonal";
   /** Additional CSS class */
@@ -88,6 +90,7 @@ const PhotoSphere = ({
   mobileCameraDistance = 12,
   height = 600,
   width,
+  mobileWidth,
   windowPositioning = "diagonal",
   className = "",
   scrollProgressRef,
@@ -158,10 +161,10 @@ const PhotoSphere = ({
 
     const canvas = canvasRef.current;
     const container = containerRef.current;
-    const canvasWidth = width || container.clientWidth;
 
     // Detect mobile device
     const isMobile = window.innerWidth < 768;
+    const canvasWidth = isMobile && mobileWidth ? mobileWidth : (width || container.clientWidth);
     const effectiveCameraDistance = isMobile
       ? mobileCameraDistance
       : cameraDistance;
@@ -405,13 +408,18 @@ const PhotoSphere = ({
     };
 
     // Touch controls
+    let touchStartPos = { x: 0, y: 0 };
+    let touchStartTime = 0;
+    let touchMoved = false;
+
     const handleTouchStart = (e: TouchEvent) => {
       if (!enableMouseControl) return;
       isDraggingRef.current = true;
-      previousMouseRef.current = {
-        x: e.touches[0].clientX,
-        y: e.touches[0].clientY,
-      };
+      const touch = e.touches[0];
+      previousMouseRef.current = { x: touch.clientX, y: touch.clientY };
+      touchStartPos = { x: touch.clientX, y: touch.clientY };
+      touchStartTime = Date.now();
+      touchMoved = false;
     };
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -427,10 +435,43 @@ const PhotoSphere = ({
         x: e.touches[0].clientX,
         y: e.touches[0].clientY,
       };
+
+      // Track if the touch moved significantly (not a tap)
+      const dx = e.touches[0].clientX - touchStartPos.x;
+      const dy = e.touches[0].clientY - touchStartPos.y;
+      if (Math.sqrt(dx * dx + dy * dy) > 10) {
+        touchMoved = true;
+      }
     };
 
-    const handleTouchEnd = () => {
+    const handleTouchEnd = (e: TouchEvent) => {
       isDraggingRef.current = false;
+
+      // Detect tap: short duration + minimal movement
+      const elapsed = Date.now() - touchStartTime;
+      if (!touchMoved && elapsed < 300) {
+        // Don't open window if scroll animation is active
+        if (scrollProgressRef && scrollProgressRef.current > 0) return;
+
+        const rect = canvas.getBoundingClientRect();
+        mouseRef.current.x =
+          ((touchStartPos.x - rect.left) / rect.width) * 2 - 1;
+        mouseRef.current.y =
+          -((touchStartPos.y - rect.top) / rect.height) * 2 + 1;
+
+        raycasterRef.current.setFromCamera(mouseRef.current, camera);
+        const intersects = raycasterRef.current.intersectObjects(
+          sphereGroup.children,
+        );
+
+        if (intersects.length > 0) {
+          const tappedMesh = intersects[0].object as THREE.Mesh;
+          const imageUrl = meshToImageMapRef.current.get(tappedMesh);
+          if (imageUrl) {
+            openWindow(imageUrl);
+          }
+        }
+      }
     };
 
     // Animation loop
@@ -579,6 +620,7 @@ const PhotoSphere = ({
     mobileCameraDistance,
     height,
     width,
+    mobileWidth,
     lineColor,
     lineOpacity,
     onScrollStart,

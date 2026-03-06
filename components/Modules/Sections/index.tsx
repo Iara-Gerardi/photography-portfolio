@@ -16,8 +16,10 @@ const SECTIONS = [
 
 function Sections({
   isScrollingBackRef,
+  isActiveRef,
 }: {
   isScrollingBackRef?: React.MutableRefObject<boolean>;
+  isActiveRef?: React.MutableRefObject<boolean>;
 }) {
   const [current, setCurrent] = useState(0);
   const [showSections, setShowSections] = useState(true);
@@ -34,6 +36,8 @@ function Sections({
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
+      // Don't process events until sections are actually visible
+      if (isActiveRef && !isActiveRef.current) return;
       // While hero is animating the scroll-back, Sections goes silent
       if (isScrollingBackRef?.current) return;
 
@@ -70,8 +74,64 @@ function Sections({
         setCurrent((c) => Math.max(c - 1, 0));
       }
     };
+
+    // Touch handling for mobile
+    let touchStartY = 0;
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      // Don't process events until sections are actually visible
+      if (isActiveRef && !isActiveRef.current) return;
+      // While hero is animating the scroll-back, Sections goes silent
+      if (isScrollingBackRef?.current) return;
+
+      const deltaY = touchStartY - e.touches[0].clientY;
+      touchStartY = e.touches[0].clientY;
+
+      // Require minimum swipe distance to trigger
+      if (Math.abs(deltaY) < 30) return;
+
+      const now = Date.now();
+      if (now - lastScrollTime.current < 700) return;
+
+      if (!showSectionsRef.current) {
+        if (deltaY < 0) {
+          lastScrollTime.current = now;
+          setShowSections(true);
+        }
+        return;
+      }
+
+      if (deltaY > 0) {
+        if (currentRef.current === SECTIONS.length - 1) {
+          lastScrollTime.current = now;
+          setShowSections(false);
+        } else {
+          lastScrollTime.current = now;
+          setCurrent((c) => Math.min(c + 1, SECTIONS.length - 1));
+        }
+      } else if (deltaY < 0) {
+        if (currentRef.current === 0 && showSectionsRef.current) {
+          if (isScrollingBackRef) {
+            isScrollingBackRef.current = true;
+          }
+          return;
+        }
+        lastScrollTime.current = now;
+        setCurrent((c) => Math.max(c - 1, 0));
+      }
+    };
+
     window.addEventListener("wheel", handleWheel, { passive: true });
-    return () => window.removeEventListener("wheel", handleWheel);
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
   }, []);
 
   return (
@@ -79,7 +139,7 @@ function Sections({
       {showSections ? (
         <motion.div
           key="sections"
-          className="relative w-full h-screen overflow-hidden"
+          className="relative w-full h-dvh overflow-hidden"
           animate={{ opacity: 1 }}
           initial={{ opacity: 0 }}
           exit={{ opacity: 0, scale: 1.5 }}

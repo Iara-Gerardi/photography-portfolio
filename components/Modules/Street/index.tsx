@@ -19,9 +19,9 @@ const lissajousConfig: React.ComponentProps<typeof Lissajous> = {
 
 export default function Street() {
   return (
-    <div className="bg-black min-h-screen">
+    <div className="bg-black min-h-dvh">
       <Lissajous {...lissajousConfig} classname="absolute overflow-hidden" />
-      <div className="grid grid-cols-3 gap-3 p-4" style={{ height: "100vh" }}>
+      <div className="grid grid-cols-3 gap-3 p-4" style={{ height: "100dvh" }}>
         {STREET_ITEMS.map((item, i) => (
           <AnimatedPhoto key={`grid-item-${i}`} item={item} />
         ))}
