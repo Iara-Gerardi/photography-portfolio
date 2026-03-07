@@ -88,11 +88,12 @@ function Dual() {
         initial={{ scale: 0.3, opacity: 0, position: "absolute", inset: 0, zIndex: 10 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1, ease: "easeOut", delay: 1.6 }}
+        className="flex items-center justify-center pointer-events-none"
       >
         <BorderIsland
           bitmap={techHeartPattern.filter((i) => i.includes(1))}
           colors={["white"]}
-          className="absolute z-10 inset-0 opacity-30 md:-bottom-56"
+          className="z-10 opacity-30 size-fit pointer-events-none"
           squareSize="size-[2.3px] md:size-1"
         />
       </motion.div>

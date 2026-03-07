@@ -77,7 +77,7 @@ function AnimatedPhoto({ item }: { item: AnimatedPhotoProps }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 cursor-zoom-out"
+            className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 cursor-zoom-out"
             onClick={() => setModalOpen(false)}
           >
             <motion.div
