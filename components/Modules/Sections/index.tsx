@@ -26,6 +26,8 @@ function Sections({
   const lastScrollTime = useRef(0);
   const currentRef = useRef(0);
   const showSectionsRef = useRef(true);
+  // Tracks whether we've already consumed the first activation event
+  const wasActiveRef = useRef(false);
 
   useEffect(() => {
     currentRef.current = current;
@@ -37,9 +39,19 @@ function Sections({
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       // Don't process events until sections are actually visible
-      if (isActiveRef && !isActiveRef.current) return;
+      if (isActiveRef && !isActiveRef.current) {
+        wasActiveRef.current = false;
+        return;
+      }
       // While hero is animating the scroll-back, Sections goes silent
       if (isScrollingBackRef?.current) return;
+
+      // First event after becoming active — reset debounce and skip
+      if (!wasActiveRef.current) {
+        wasActiveRef.current = true;
+        lastScrollTime.current = Date.now();
+        return;
+      }
 
       const now = Date.now();
       if (now - lastScrollTime.current < 700) return;
@@ -83,9 +95,19 @@ function Sections({
 
     const handleTouchMove = (e: TouchEvent) => {
       // Don't process events until sections are actually visible
-      if (isActiveRef && !isActiveRef.current) return;
+      if (isActiveRef && !isActiveRef.current) {
+        wasActiveRef.current = false;
+        return;
+      }
       // While hero is animating the scroll-back, Sections goes silent
       if (isScrollingBackRef?.current) return;
+
+      // First event after becoming active — reset debounce and skip
+      if (!wasActiveRef.current) {
+        wasActiveRef.current = true;
+        lastScrollTime.current = Date.now();
+        return;
+      }
 
       const deltaY = touchStartY - e.touches[0].clientY;
       touchStartY = e.touches[0].clientY;
