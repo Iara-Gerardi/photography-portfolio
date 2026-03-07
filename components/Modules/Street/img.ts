@@ -10,24 +10,25 @@ import { AnimatedPhotoProps } from "@/components/AnimatedPhoto/types";
 export const STREET_ITEMS: AnimatedPhotoProps[] = [
   {
     src: img1,
-    wrapperClassName:
-      "w-full [grid-column:1/span_2] md:[grid-column:1/span_1]",
-    className: "max-sm:p-3.5",
+    wrapperClassName: "w-full [grid-column:1/span_2] md:[grid-column:1/span_1] [&>p]:pl-2 [&>p]:pb-1",
+    mobileObjectFit: "cover",
+    label: '( \\~/ )',
   },
   {
     src: img2,
     row: 3,
     delay: 1.6,
     mobileObjectFit: "cover",
+    label: '( /~\\ )',
     wrapperClassName:
-      "w-full [grid-column:2/span_2] md:[grid-column:3/span_1] [&>p]:bg-slate-400",
-    className: "max-sm:p-5",
+      "w-full [grid-column:2/span_2] md:[grid-column:3/span_1] [&>p]:pl-2 [&>p]:pb-1",
   },
   {
     src: img3,
     label: "( -.-.. )",
     column: 2,
     row: 2,
+    mobileObjectFit: "cover",
     delay: 0.8,
     wrapperClassName: "[&>p]:pl-2 [&>p]:pb-1",
   },
@@ -36,18 +37,21 @@ export const STREET_ITEMS: AnimatedPhotoProps[] = [
     label: "( .__-. )",
     column: 1,
     row: 2,
+    mobileObjectFit: "cover",
     delay: 0.4,
     wrapperClassName: "[&>p]:pl-2 [&>p]:pb-1",
   },
   {
     src: img5,
     label: "( .... )",
+    mobileObjectFit: "cover",
     delay: 0.4,
     wrapperClassName: "[&>p]:pl-2 [&>p]:pb-1",
   },
   {
     src: img6,
     label: "( .-__. )",
+    mobileObjectFit: "cover",
     column: 3,
     row: 2,
     delay: 1.2,
@@ -57,6 +61,7 @@ export const STREET_ITEMS: AnimatedPhotoProps[] = [
     src: img7,
     label: "( ____ )",
     row: 3,
+    mobileObjectFit: "cover",
     delay: 1.2,
     wrapperClassName:
       "[&>p]:pl-2 [&>p]:pb-1 [grid-column:1] md:[grid-column:2]",

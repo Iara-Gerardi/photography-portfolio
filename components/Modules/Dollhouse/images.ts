@@ -11,7 +11,7 @@ import img10 from "./photos/0810.jpg";
 import img11 from "./photos/0811.jpg";
 
 const smallImagesStyle =
-  "[&>p]:absolute [&>p]:bottom-2/5 [&>p]:max-[500px]:left-1 [&>p]:left-1/4 [&>p]:md:left-3/7 flex items-center justify-center [&>p]:text-2xl [&>p]:text-white/60";
+  "[&>p]:absolute [&>p]:bottom-2/5 [&>p]:w-full [&>p]:text-center flex items-center justify-center [&>p]:text-2xl [&>p]:text-white/60 [&>p]:whitespace-nowrap";
 //𓇗
 export const ITEMS: AnimatedPhotoProps[] = [
   {
@@ -83,5 +83,5 @@ export const ITEMS: AnimatedPhotoProps[] = [
     delay: 3.5,
     mobileObjectFit: "cover",
     wrapperClassName: "w-full [grid-column:1/span_4] md:[grid-column:3/span_2]",
-  },
+  }
 ];
