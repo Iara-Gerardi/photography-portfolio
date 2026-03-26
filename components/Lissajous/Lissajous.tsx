@@ -96,8 +96,9 @@ const Lissajous = ({
   // y(t) = B · sin(b·t)
   const calculatePosition = (t: number, phase: number) => {
     const halfSize = size / 2;
-    const x = amplitudeX * halfSize * Math.sin(freqA * t + phase);
-    const y = amplitudeY * halfSize * Math.sin(freqB * t);
+    const round3 = (n: number) => Math.round(n * 1000) / 1000;
+    const x = round3(amplitudeX * halfSize * Math.sin(freqA * t + phase));
+    const y = round3(amplitudeY * halfSize * Math.sin(freqB * t));
     return { x, y };
   };
 
